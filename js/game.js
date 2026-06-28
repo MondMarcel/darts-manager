@@ -13,8 +13,12 @@ const Game = {
     const t = UI.currentTournament();
     const warnings = [];
 
-    if(!g.trainedThisWeek) warnings.push("Du hast diese Woche noch kein Training absolviert.");
-    if(t && Tournaments.eligible(t) && !g.playedThisWeek && g.budget >= t.fee) {
+    if(!g.trainedThisWeek) {
+      warnings.push("Du hast diese Woche noch kein Training absolviert.");
+    }
+
+    const tournamentIsPlayable = t && Tournaments.eligible(t) && g.budget >= t.fee;
+    if(tournamentIsPlayable && !g.playedThisWeek) {
       warnings.push(`Das spielbare Turnier <b>${t.name}</b> wurde noch nicht gespielt.`);
     }
 
@@ -22,6 +26,7 @@ const Game = {
       UI.showConfirm(warnings.join("<br>") + "<br><br>Möchtest du trotzdem in die nächste Woche gehen?");
       return;
     }
+
     this.forceNextWeek();
   },
   forceNextWeek(){
@@ -30,14 +35,21 @@ const Game = {
     g.week++;
     g.trainedThisWeek=false;
     g.playedThisWeek=false;
+
     if(g.week===g.tourcardUntilWeek+1 && g.tourcardUntilWeek>0){
       const rank=this.getRank();
-      if(rank<=64){g.tourcardUntilWeek=g.week+104;UI.log(`${g.player.name} bleibt Top 64 und behält die Tourcard für weitere 2 Jahre.`);}
-      else{UI.log(`${g.player.name} verliert die Tourcard, weil er nicht in den Top 64 steht.`);}
+      if(rank<=64){
+        g.tourcardUntilWeek=g.week+104;
+        UI.log(`${g.player.name} bleibt Top 64 und behält die Tourcard für weitere 2 Jahre.`);
+      } else {
+        UI.log(`${g.player.name} verliert die Tourcard, weil er nicht in den Top 64 steht.`);
+      }
     }
+
     const t=UI.currentTournament();
     if(t) UI.log(`Neue Woche: ${t.name} steht an (${t.category}).`);
     else UI.log("Neue Woche: Kein Turnier angesetzt. Fokus auf Training.");
+
     UI.render();
   },
   getRank(){

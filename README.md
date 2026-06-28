@@ -1,5 +1,5 @@
-# Darts Manager Alpha 0.8
+# Darts Manager Alpha 0.8.1
 
-Manager-Level, Talentpunkte, Skilltree, XP-System und Wochenwarnung.
+Patch: Wochenwarnung repariert und Changelog aktualisiert.
 
-Upload: gesamten Inhalt in GitHub hochladen und vorhandene Dateien ersetzen.
+Ersetze nur die Dateien aus dieser ZIP in deinem GitHub-Repository.

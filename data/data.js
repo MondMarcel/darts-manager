@@ -1,6 +1,7 @@
 const DATA = {
-  version: "0.8",
+  version: "0.8.1",
   changelog: [
+    {version:"0.8.1", updates:["Wochenwarnung repariert: Warnung erscheint jetzt, wenn Training oder ein spielbares Turnier übersprungen wird","Changelog auf Version 0.8.1 aktualisiert"]},
     {version:"0.8", updates:["Manager-Level und Manager-XP eingebaut","XP-Balancing deutlich langsamer gestaltet","Talentpunkte bei ausgewählten Level-Ups","Skilltree mit Trainer-, Scout-, Manager- und Mentor-Skills","Wochenwarnung beim Überspringen von Training oder spielbarem Turnier","Skilltree bereitet Scouting-System für Version 0.9 vor"]},
     {version:"0.7", updates:["Spieler ohne Tourcard erscheinen nicht mehr in der Order of Merit","Fiktive Weltranglisten-Namen überarbeitet und stärker an Nationalitäten angepasst","Tooltips für Talente und Makel eingebaut","Karriereleistungen-Button mit Statistiken ergänzt","Turniere erzeugen jetzt Karrierewerte wie 180er, 9-Darter, Titel und Preisgeldhistorie"]},
     {version:"0.6", updates:["Projekt professionell in Dateien strukturiert","Lokaler Login mit Profilname und Passwort","Speichern/Laden des Spielstands per localStorage","Wochenablauf auf Training + optional Turnier + Nächste Woche umgestellt","Changelog-Button oben rechts eingebaut"]},
