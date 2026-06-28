@@ -1,6 +1,7 @@
 const DATA = {
-  version: "0.6",
+  version: "0.7",
   changelog: [
+    {version:"0.7", updates:["Spieler ohne Tourcard erscheinen nicht mehr in der Order of Merit","Fiktive Weltranglisten-Namen überarbeitet und stärker an Nationalitäten angepasst","Tooltips für Talente und Makel eingebaut","Karriereleistungen-Button mit Statistiken ergänzt","Turniere erzeugen jetzt Karrierewerte wie 180er, 9-Darter, Titel und Preisgeldhistorie"]},
     {version:"0.6", updates:["Projekt professionell in Dateien strukturiert","Lokaler Login mit Profilname und Passwort","Speichern/Laden des Spielstands per localStorage","Wochenablauf auf Training + optional Turnier + Nächste Woche umgestellt","Changelog-Button oben rechts eingebaut"]},
     {version:"0.5", updates:["Turnierkalender","Tourcard-System","Q-School","200 simulierte Tourcardholder","Qualifier für große Turniere"]},
     {version:"0.4", updates:["Alterung nach 52 Wochen","Kompakteres Dashboard","Turnierbericht-Popup mit Matchdetails"]},
@@ -8,6 +9,14 @@ const DATA = {
     {version:"0.2", updates:["Training mit positivem/negativem Ausgang","Training nach Intensität","Abwechslungsreichere Eventtexte"]},
     {version:"0.1", updates:["Erste spielbare Webapp","Spielerauswahl","Spielerkarte","Training","Wochenturnier"]}
   ],
+  traitDescriptions: {
+    "Keine sichtbare Eigenschaft": "Dieser Spieler hat aktuell kein besonderes sichtbares Talent.",
+    "Kein sichtbarer Makel": "Dieser Spieler hat aktuell keinen sichtbaren Makel.",
+    "Power Scorer": "Erhöht die Chance auf hohe Aufnahmen und 180er, besonders wenn das Scoringtraining anschlägt.",
+    "Wacklige Doppel": "Bei engen Matches kann die Doppelquote stärker schwanken.",
+    "Ruhige Hand": "Unter Druck bleiben Doppel und Checkouts stabiler. Besonders wertvoll in Decidern und späten Turnierrunden.",
+    "Langsamer Starter": "In frühen Legs und ersten Runden startet der Spieler etwas schwächer. Gute Form kann diesen Effekt abfedern."
+  },
   starters: [
     {name:"Finn Adler",age:18,startAge:18,nation:"Deutschland",type:"Ausgeglichen",avg:72.8,double:29,maxes:0.09,checkout:8,form:50,talent:"Keine sichtbare Eigenschaft",flaw:"Kein sichtbarer Makel",potential:78,growth:.75,report:"Solider Eindruck. Keine auffälligen Schwächen, aber auch kein sofort erkennbarer X-Faktor."},
     {name:"Jamie Brooks",age:19,startAge:19,nation:"England",type:"Scorer",avg:75.4,double:24,maxes:0.18,checkout:6,form:45,talent:"Power Scorer",flaw:"Wacklige Doppel",potential:86,growth:.62,report:"Kann Spiele mit hohen Scores dominieren, verschenkt aber viele Legs auf Doppel."},
@@ -28,5 +37,55 @@ const DATA = {
     {week:38,name:"Autumn Challenge",category:"Regional Gebühr",fee:120,winnerPrize:1200,access:"open",difficulty:[70,74,78,82]},
     {week:44,name:"Players Circuit 2",category:"Tourcard Event",fee:0,winnerPrize:3000,access:"tour",difficulty:[77,81,85,89,93]},
     {week:49,name:"Winter County Open",category:"Regional frei",fee:0,winnerPrize:400,access:"open",difficulty:[64,68,72,76]}
-  ]
+  ],
+  namePools: {
+    "England": {
+      first:["Archie","Benedict","Callan","Dexter","Elliot","Harvey","Jenson","Kieran","Logan","Miles","Oscar","Reece","Toby","Warren"],
+      last:["Ashford","Bennett","Carver","Ellis","Granger","Hale","Mercer","Oakley","Parker","Radford","Sterling","Tanner","Whitmore","Yardley"]
+    },
+    "Niederlande": {
+      first:["Bram","Daan","Floris","Jelle","Koen","Luuk","Mats","Niek","Ruben","Sem","Stijn","Teun","Wout","Yorick"],
+      last:["Aalbers","Boonstra","Dekens","Groen","Haverkamp","Kuipers","Lammers","Meijerink","Oosterveld","Rietman","Timmer","Verhoeven","Willemsen","Zwart"]
+    },
+    "Wales": {
+      first:["Aled","Bryn","Carwyn","Dafydd","Emrys","Gareth","Iwan","Lloyd","Morgan","Owain","Rhys","Steffan"],
+      last:["Bevan","Cadogan","Dewi","Glynn","Hopkin","Llewellyn","Maddock","Pritchard","Rhydderch","Trevithick","Vaughan","Wynne"]
+    },
+    "Schottland": {
+      first:["Alistair","Blair","Callum","Douglas","Ewan","Finlay","Gregor","Hamish","Iain","Kerr","Lachlan","Ruaridh"],
+      last:["Abernethy","Brodie","Cairns","Drummond","Ferguson","Galloway","Kerrigan","MacLeod","Nairn","Ramsay","Sinclair","Strachan"]
+    },
+    "Deutschland": {
+      first:["Anton","Bastian","Emil","Florian","Hannes","Jonas","Kilian","Lennard","Mats","Niklas","Oskar","Till","Vincent"],
+      last:["Bergmann","Eichhorn","Falkner","Gerber","Hartung","Kessler","Lindner","Mertens","Neubauer","Reichert","Seidel","Thalheim","Vogel"]
+    },
+    "Belgien": {
+      first:["Arne","Bastien","Cedric","Dries","Emiel","Joran","Lander","Mathis","Niels","Senne","Thibault","Wout"],
+      last:["Bogaerts","Claes","De Smet","Goossens","Lemmens","Maertens","Peeters","Roels","Stevens","Van Acker","Van den Broeck","Verlinden"]
+    },
+    "Australien": {
+      first:["Bailey","Cooper","Darcy","Flynn","Hayden","Jasper","Lachie","Mitchell","Nate","Riley","Spencer","Tyson"],
+      last:["Baxter","Calloway","Dawson","Fletcher","Harrigan","Kendall","Lawson","Maddox","Redfern","Sullivan","Thorpe","Walsh"]
+    },
+    "Polen": {
+      first:["Adam","Bartosz","Cezary","Dawid","Filip","Kamil","Lukasz","Marcin","Mikolaj","Oskar","Pawel","Tomasz"],
+      last:["Bielecki","Czerwinski","Dabrowski","Grabowski","Kaczmarek","Lisowski","Majewski","Nowicki","Ostrowski","Pawlak","Rutkowski","Zielinski"]
+    },
+    "Irland": {
+      first:["Aidan","Cian","Conor","Declan","Eamon","Finnian","Niall","Oisin","Ronan","Seamus","Tadhg"],
+      last:["Brannigan","Clancy","Doyle","Finnegan","Kavanagh","Larkin","Maguire","O'Daly","Quinn","Rafferty","Sheehan"]
+    },
+    "Österreich": {
+      first:["Adrian","David","Felix","Gregor","Lukas","Moritz","Noah","Paul","Simon","Tobias"],
+      last:["Auer","Brandner","Eder","Gruber","Holzer","Lechner","Moser","Reisinger","Steiner","Wimmer"]
+    },
+    "Frankreich": {
+      first:["Adrien","Baptiste","Clement","Etienne","Hugo","Jules","Laurent","Mathieu","Noe","Quentin","Remi","Theo"],
+      last:["Arnaud","Beauchamp","Chevalier","Delaunay","Fontaine","Garnier","Lemoine","Marchand","Perrot","Rousseau","Vasseur"]
+    },
+    "Dänemark": {
+      first:["Anders","Emil","Frederik","Jonas","Lasse","Mads","Magnus","Nikolaj","Rasmus","Soren","Viktor"],
+      last:["Bjerre","Dahlgaard","Engholm","Hedegaard","Krogh","Lindholm","Moller","Nygaard","Ravn","Sondergaard","Vester"]
+    }
+  }
 };

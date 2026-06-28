@@ -13,14 +13,26 @@ const State = {
 
 const Ranking = {
   generateWorldPlayers() {
-    const first=["Luke","Michael","Gerwyn","Peter","Rob","Damon","Danny","Stephen","Chris","Ross","Martin","Josh","Ryan","Dimitri","Dirk","Joe","Gabriel","Nathan","Gary","Dave","Ricky","Alan","Kim","Krzysztof","Jonny","Madars","Keegan","Mervyn","Raymond","Brendan"];
-    const last=["Cross","Smith","Price","Wright","Clayton","Heta","Noppert","Bunting","Dobey","Smithson","Schindler","Rock","Searle","King","van Bergen","Cullen","Clemens","Aspin","Anderson","Chiswell","Evans","Soutar","Huybrechts","Ratajski","Barker","Razma","Brown","Lewis","Menzies","Wattimena"];
-    const nations=["England","Niederlande","Wales","Schottland","Deutschland","Belgien","Australien","Polen","Irland","Österreich","Frankreich","Dänemark"];
-    const arr=[];
-    for(let i=0;i<200;i++){
-      const base=Math.max(1000,Math.floor(220000*Math.exp(-i/38)+Math.random()*4500));
-      arr.push({name:first[i%first.length]+" "+last[(i*7)%last.length],nation:nations[i%nations.length],prize:base});
+    const nations = Object.keys(DATA.namePools);
+    const used = new Set();
+    const arr = [];
+
+    for(let i=0; i<200; i++){
+      const nation = nations[i % nations.length];
+      const pool = DATA.namePools[nation];
+      let name = "";
+      let guard = 0;
+      do {
+        const first = pool.first[Math.floor(Math.random()*pool.first.length)];
+        const last = pool.last[Math.floor(Math.random()*pool.last.length)];
+        name = first + " " + last;
+        guard++;
+      } while(used.has(name) && guard < 50);
+
+      used.add(name);
+      const base = Math.max(1000, Math.floor(220000 * Math.exp(-i/38) + Math.random()*4500));
+      arr.push({name, nation, prize:base});
     }
-    return arr;
+    return arr.sort((a,b)=>b.prize-a.prize);
   }
 };

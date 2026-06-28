@@ -57,6 +57,8 @@ const UI = {
     document.getElementById("form").textContent=this.formLabel(p.form);
     document.getElementById("talent").textContent=p.talent;
     document.getElementById("flaw").textContent=p.flaw;
+    document.getElementById("talent").setAttribute("data-tip", DATA.traitDescriptions[p.talent] || "Keine Beschreibung vorhanden.");
+    document.getElementById("flaw").setAttribute("data-tip", DATA.traitDescriptions[p.flaw] || "Keine Beschreibung vorhanden.");
     document.getElementById("playTournamentBtn").disabled = !t || g.playedThisWeek || !Tournaments.eligible(t) || g.budget < (t?t.fee:0);
     ["trainLow","trainMed","trainHigh"].forEach(id=>document.getElementById(id).disabled=g.trainedThisWeek);
     this.renderLog();
@@ -92,10 +94,41 @@ const UI = {
     this.showModal("Turnierkalender", body);
   },
   showRanking(){
-    const rows=[...State.game.worldPlayers,{name:State.game.player.name,nation:State.game.player.nation,prize:State.game.playerPrize,isUser:true}].sort((a,b)=>b.prize-a.prize);
-    let body=`<table><thead><tr><th>Rang</th><th>Spieler</th><th>Nation</th><th>Preisgeld</th></tr></thead><tbody>`;
+    const userEntry = {name:State.game.player.name,nation:State.game.player.nation,prize:State.game.playerPrize,isUser:true};
+    const rows = UI.hasTourcard()
+      ? [...State.game.worldPlayers, userEntry].sort((a,b)=>b.prize-a.prize)
+      : [...State.game.worldPlayers].sort((a,b)=>b.prize-a.prize);
+
+    let body = "";
+    if(!UI.hasTourcard()){
+      body += `<p class="small"><b>${State.game.player.name}</b> besitzt keine Tourcard und wird deshalb nicht in der Order of Merit geführt.</p>`;
+    }
+
+    body+=`<table><thead><tr><th>Rang</th><th>Spieler</th><th>Nation</th><th>Preisgeld</th></tr></thead><tbody>`;
     rows.forEach((p,i)=>{ const mark=p.isUser?" style='background:#263849;font-weight:bold;'":""; body+=`<tr${mark}><td>${i+1}</td><td>${p.name}${p.isUser?" · Dein Spieler":""}</td><td>${p.nation}</td><td>${this.euro(p.prize)}</td></tr>`; });
     body+=`</tbody></table>`;
     this.showModal("Weltrangliste / Order of Merit", body);
+  },
+  showCareer(){
+    const p = State.game.player;
+    const c = p.career || Game.emptyCareer();
+    const body = `<table>
+      <tbody>
+        <tr><td>Karriere-Preisgeld</td><td>${this.euro(c.prizeMoney || 0)}</td></tr>
+        <tr><td>Turniersiege</td><td>${c.titles || 0}</td></tr>
+        <tr><td>Regionale Titel</td><td>${c.regionalTitles || 0}</td></tr>
+        <tr><td>Tour-Titel</td><td>${c.tourTitles || 0}</td></tr>
+        <tr><td>Major-Titel</td><td>${c.majorTitles || 0}</td></tr>
+        <tr><td>Gespielte Matches</td><td>${c.matches || 0}</td></tr>
+        <tr><td>Siege</td><td>${c.wins || 0}</td></tr>
+        <tr><td>Niederlagen</td><td>${c.losses || 0}</td></tr>
+        <tr><td>180er</td><td>${c.max180s || 0}</td></tr>
+        <tr><td>9-Darter</td><td>${c.nineDarters || 0}</td></tr>
+        <tr><td>Höchster Match-Average</td><td>${(c.highestAverage || 0).toFixed(1)}</td></tr>
+        <tr><td>Bestes Checkout</td><td>${c.highestCheckout || 0}</td></tr>
+        <tr><td>Q-School-Erfolge</td><td>${c.qSchoolSuccess || 0}</td></tr>
+      </tbody>
+    </table>`;
+    this.showModal(`Karriereleistungen: ${p.name}`, body);
   }
 };
