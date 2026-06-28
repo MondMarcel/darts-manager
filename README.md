@@ -1,3 +1,3 @@
-# Darts Manager Alpha 0.9.1.1
+# Darts Manager Alpha 0.9.2
 
-QoL-Patch: Changelog repariert, Versionsbanner entfernt, Popups mit X, ESC und Hintergrund-Klick schließbar.
+Scouting-System integriert.

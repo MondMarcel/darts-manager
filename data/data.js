@@ -1,6 +1,7 @@
 const DATA = {
-  version: "0.9.1.1",
+  version: "0.9.2",
   changelog: [
+    {version:"0.9.2", updates:["Scouting-System integriert","Scouting-Aufträge mit Land, Art und Kosten","Scouting-Ergebnisse erscheinen nach Wochenwechsel","Potenzialspanne abhängig vom Scouting-Level","Länderstärken beeinflussen Talentqualität","Kandidatenliste mit sichtbaren Werten, Talent und Makel"]},
     {version:"0.9.1.1", updates:["Changelog repariert","Versionshinweis unter dem Titel entfernt","Popupfenster besitzen jetzt ein X oben rechts","Popups schließen per ESC und Klick auf den Hintergrund"]},
     {version:"0.9.1", updates:["XP-Balancing überarbeitet","180er noch stärker an Average gekoppelt","Pubturniere geben weniger Fortschritt"]},
     {version:"0.9", updates:["180er-Anzahl in Turnieren deutlich realistischer skaliert","9-Darter sind für schwächere Spieler praktisch ausgeschlossen und insgesamt deutlich seltener","Manager-XP stark reduziert und Levelkurve verlängert","Pubturniere in turnierfreien Wochen ergänzt: 10 € Startgeld, 50 € Siegerpreisgeld","Turnierbutton wird rot, wenn ein Turnier spielbar ist","Grundlage für Scouting-System weiter vorbereitet"]},
@@ -42,6 +43,25 @@ const DATA = {
     "Kanada": {tier:5, density:25, talent:32, elite:25},
     "Frankreich": {tier:5, density:25, talent:30, elite:22},
     "Dänemark": {tier:5, density:35, talent:38, elite:30}
+  },
+  scoutingTypes: [
+    {id:"local", name:"Lokale Ligen", cost:25, minAge:18, maxAge:25, currentBonus:2, potentialBonus:-8, desc:"Günstig. Mehr Durchschnittsspieler, aber gelegentlich brauchbare Profis."},
+    {id:"youth", name:"Jugendturniere", cost:75, minAge:15, maxAge:20, currentBonus:-4, potentialBonus:8, desc:"Jünger, riskanter, aber beste Chance auf hohe Potenziale."},
+    {id:"amateur", name:"Amateur-Tour", cost:150, minAge:19, maxAge:28, currentBonus:8, potentialBonus:0, desc:"Spieler sind aktueller stärker, aber nicht immer mit hohem Potenzial."}
+  ],
+  scoutingNames: {
+    "Deutschland": {first:["Leon","Mats","Finn","Noah","Emil","Ben","Luca","Jonas"], last:["Weber","Kraus","Hoffmann","Bauer","Schuster","Vogel","Brandt","Seidel"]},
+    "Niederlande": {first:["Daan","Bram","Jelle","Koen","Luuk","Sem","Teun","Wout"], last:["van Dijk","de Vries","Bakker","Smit","Jansen","Kuipers","Verhoeven","Groen"]},
+    "Belgien": {first:["Arne","Dries","Emiel","Joran","Lander","Niels","Senne","Wout"], last:["Peeters","Claes","Goossens","Maertens","Stevens","Verlinden","De Smet","Roels"]},
+    "England": {first:["Archie","Callan","Dexter","Harvey","Kieran","Miles","Reece","Toby"], last:["Ashford","Bennett","Carver","Ellis","Hale","Mercer","Parker","Whitmore"]},
+    "Wales": {first:["Aled","Bryn","Carwyn","Emrys","Iwan","Morgan","Owain","Rhys"], last:["Bevan","Glynn","Hopkin","Llewellyn","Pritchard","Vaughan","Wynne","Cadogan"]},
+    "Schottland": {first:["Blair","Callum","Ewan","Finlay","Gregor","Hamish","Kerr","Lachlan"], last:["Brodie","Cairns","Drummond","Galloway","MacLeod","Ramsay","Sinclair","Strachan"]},
+    "Irland": {first:["Aidan","Cian","Conor","Declan","Eamon","Niall","Oisin","Ronan"], last:["Clancy","Doyle","Finnegan","Kavanagh","Larkin","Maguire","Quinn","Sheehan"]},
+    "Polen": {first:["Adam","Bartosz","Dawid","Filip","Kamil","Lukasz","Marcin","Pawel"], last:["Bielecki","Dabrowski","Grabowski","Kaczmarek","Lisowski","Nowicki","Pawlak","Zielinski"]},
+    "Österreich": {first:["Adrian","David","Felix","Gregor","Lukas","Moritz","Noah","Tobias"], last:["Auer","Brandner","Eder","Gruber","Holzer","Lechner","Moser","Steiner"]},
+    "Australien": {first:["Bailey","Cooper","Darcy","Flynn","Hayden","Jasper","Riley","Tyson"], last:["Baxter","Dawson","Fletcher","Harrigan","Lawson","Redfern","Sullivan","Walsh"]},
+    "Frankreich": {first:["Adrien","Baptiste","Clement","Etienne","Hugo","Jules","Mathieu","Remi"], last:["Arnaud","Chevalier","Fontaine","Garnier","Lemoine","Marchand","Rousseau","Vasseur"]},
+    "Dänemark": {first:["Anders","Emil","Frederik","Jonas","Lasse","Mads","Rasmus","Viktor"], last:["Bjerre","Dahlgaard","Krogh","Lindholm","Moller","Ravn","Vester","Nygaard"]}
   },
   traitDescriptions: {
     "Keine sichtbare Eigenschaft": "Dieser Spieler hat aktuell kein besonderes sichtbares Talent.",

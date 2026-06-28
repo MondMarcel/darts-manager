@@ -35,6 +35,7 @@ const Game = {
     g.week++;
     g.trainedThisWeek=false;
     g.playedThisWeek=false;
+    Scouting.completeIfReady();
 
     if(g.week===g.tourcardUntilWeek+1 && g.tourcardUntilWeek>0){
       const rank=this.getRank();
