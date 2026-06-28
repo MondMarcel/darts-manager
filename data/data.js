@@ -1,6 +1,7 @@
 const DATA = {
-  version: "0.9.1",
+  version: "0.9.1.1",
   changelog: [
+    {version:"0.9.1.1", updates:["Changelog repariert","Versionshinweis unter dem Titel entfernt","Popupfenster besitzen jetzt ein X oben rechts","Popups schließen per ESC und Klick auf den Hintergrund"]},
     {version:"0.9.1", updates:["XP-Balancing überarbeitet","180er noch stärker an Average gekoppelt","Pubturniere geben weniger Fortschritt"]},
     {version:"0.9", updates:["180er-Anzahl in Turnieren deutlich realistischer skaliert","9-Darter sind für schwächere Spieler praktisch ausgeschlossen und insgesamt deutlich seltener","Manager-XP stark reduziert und Levelkurve verlängert","Pubturniere in turnierfreien Wochen ergänzt: 10 € Startgeld, 50 € Siegerpreisgeld","Turnierbutton wird rot, wenn ein Turnier spielbar ist","Grundlage für Scouting-System weiter vorbereitet"]},
     {version:"0.8.1", updates:["Wochenwarnung repariert: Warnung erscheint jetzt, wenn Training oder ein spielbares Turnier übersprungen wird","Changelog auf Version 0.8.1 aktualisiert"]},

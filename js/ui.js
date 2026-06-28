@@ -1,4 +1,23 @@
 const UI = {
+  initModalControls(){
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape"){
+        this.closeModal();
+        this.closeConfirm();
+      }
+    });
+    ["modal","confirmModal"].forEach(id => {
+      const el = document.getElementById(id);
+      if(el){
+        el.addEventListener("click", (e) => {
+          if(e.target === el){
+            if(id === "modal") this.closeModal();
+            if(id === "confirmModal") this.closeConfirm();
+          }
+        });
+      }
+    });
+  },
   euro(n){ return Math.floor(n).toLocaleString("de-DE")+" €"; },
   season(){ return Math.floor((State.game.week-1)/52)+1; },
   yearWeek(){ return ((State.game.week-1)%52)+1; },

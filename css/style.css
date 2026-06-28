@@ -33,3 +33,19 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th,td{border-bottom:1p
 .tournament-ready{background:#b83b3b!important;color:#fff!important}
 .tournament-ready:hover{background:#d64a4a!important}
 button:disabled.tournament-ready{background:#42505c!important;color:#aab3bb!important}
+
+.modal-content{position:relative}
+.modal-x{
+  position:absolute;
+  top:10px;
+  right:12px;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  padding:0;
+  font-size:22px;
+  line-height:1;
+  background:#2d445c;
+  color:#f5f5f5;
+}
+.modal-x:hover{background:#b83b3b;color:#fff}

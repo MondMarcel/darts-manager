@@ -11,7 +11,7 @@
   <div class="topbar">
     <div>
       <h1>Darts Manager Alpha 0.9</h1>
-      <div class="small">Balancing · Pubturniere · Scouting-Vorbereitung</div>
+      <div class="small"></div>
     </div>
     <div>
       <button class="secondary" onclick="UI.showChangelog()">Changelog</button>
@@ -127,6 +127,7 @@
   <div id="modal" class="modal hidden">
     <div class="modal-content">
       <h2 id="modalTitle"></h2>
+      <button class="modal-x" onclick="UI.closeModal()">×</button>
       <div id="modalBody"></div>
       <button onclick="UI.closeModal()">Schließen</button>
     </div>
@@ -134,6 +135,7 @@
 
   <div id="confirmModal" class="modal hidden">
     <div class="modal-content">
+      <button class="modal-x" onclick="UI.closeConfirm()">×</button>
       <h2>Woche wirklich beenden?</h2>
       <div id="confirmBody" class="small"></div>
       <button onclick="Game.forceNextWeek()">Ja, Woche beenden</button>
