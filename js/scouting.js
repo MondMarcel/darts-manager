@@ -38,6 +38,7 @@ const Scouting = {
           <div class="stat"><span>Potenzial-Einschätzung</span><strong>${r.potentialLow}–${r.potentialHigh}</strong></div>
           <span class="tag good">${r.talent}</span> <span class="tag bad">${r.flaw}</span>
           <p class="small">${r.report}</p>
+          <button onclick="Scouting.recruit(${i})">Spieler verpflichten</button>
         </div>`;
       });
     }
@@ -80,6 +81,31 @@ const Scouting = {
     g.scoutingReports = reports;
     g.scoutingTask = null;
     UI.log(`Scouting abgeschlossen: ${reports.length} neue Berichte aus ${task.country}.`);
+  },
+  recruit(index){
+    const g = State.game;
+    if(!g.roster || !g.roster.length){ g.roster = [g.player]; g.activePlayerIndex = 0; }
+    if(g.roster.length >= 2){
+      UI.log("Kein freier Spielerslot. Aktuell sind maximal 2 Spieler möglich.");
+      return;
+    }
+    const r = g.scoutingReports[index];
+    if(!r) return;
+    const player = {
+      name:r.name, age:r.age, startAge:r.age, nation:r.nation, type:r.type,
+      avg:r.avg, double:r.double, maxes:r.maxes, checkout:r.checkout,
+      form:50, talent:r.talent, flaw:r.flaw, potential:r.potential,
+      growth:0.65 + Math.random()*0.25,
+      report:r.report,
+      career:Game.emptyCareer()
+    };
+    g.roster.push(player);
+    g.activePlayerIndex = g.roster.length - 1;
+    g.player = player;
+    g.scoutingReports.splice(index,1);
+    UI.closeModal();
+    UI.log(`${player.name} wurde verpflichtet und ist jetzt dein aktiver Spieler.`);
+    UI.render();
   },
   generatePlayer(country,type){
     const pool = DATA.scoutingNames[country] || DATA.scoutingNames["Deutschland"];

@@ -1,3 +1,3 @@
-# Darts Manager Alpha 0.9.2
+# Darts Manager Alpha 0.9.2.1
 
-Scouting-System integriert.
+Fix: Scouting-Spieler können verpflichtet werden, Teamliste und aktiver Spieler.

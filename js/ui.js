@@ -56,11 +56,14 @@ const UI = {
     });
   },
   render() {
-    const g=State.game, p=g.player; if(!p)return;
+    const g=State.game; let p=g.player; if(!p)return;
     if(!g.managerLevel) g.managerLevel = 1;
     if(!g.managerXP && g.managerXP !== 0) g.managerXP = 0;
     if(!g.talentPoints) g.talentPoints = 0;
     if(!g.skills) g.skills = [];
+    if(!g.roster || !g.roster.length){ g.roster = [p]; g.activePlayerIndex = 0; }
+    g.player = g.roster[g.activePlayerIndex || 0];
+    p = g.player;
     p.age=p.startAge+Math.floor((g.week-1)/52);
     const t=this.currentTournament();
     document.getElementById("profileName").textContent=g.profileName;
@@ -76,6 +79,8 @@ const UI = {
     document.getElementById("xpFill").style.width=xpProgress+"%";
     document.getElementById("trainerLevel").textContent=g.trainerLevel;
     document.getElementById("scoutLevel").textContent=g.scoutLevel;
+    const slotsEl = document.getElementById("playerSlots");
+    if(slotsEl) slotsEl.textContent = `${(g.roster || []).length} / 2`;
     document.getElementById("nextTournamentName").textContent=t?t.name:"Kein Turnier";
     document.getElementById("nextTournamentCategory").textContent=t?t.category:"-";
     document.getElementById("entryFee").textContent=t?this.euro(t.fee):"-";
@@ -176,6 +181,28 @@ const UI = {
   showConfirm(body){
     document.getElementById("confirmBody").innerHTML = body;
     document.getElementById("confirmModal").classList.remove("hidden");
+  },
+  showTeam(){
+    const g = State.game;
+    if(!g.roster || !g.roster.length) return;
+    let body = `<p class="small">Wähle, welcher Spieler aktuell trainiert und Turniere spielt.</p>`;
+    g.roster.forEach((p,i)=>{
+      body += `<div class="player-report">
+        <b>${p.name}</b> · ${p.age} Jahre · ${p.nation}<br>
+        <span class="small">${p.type || "Spieler"} ${i === g.activePlayerIndex ? "· Aktiver Spieler" : ""}</span>
+        <div class="stat"><span>Average</span><strong>${p.avg.toFixed(1)}</strong></div>
+        <div class="stat"><span>Doppelquote</span><strong>${p.double.toFixed(1)}%</strong></div>
+        <button ${i === g.activePlayerIndex ? "disabled" : ""} onclick="UI.setActivePlayer(${i})">Als aktiv wählen</button>
+      </div>`;
+    });
+    this.showModal("Team", body);
+  },
+  setActivePlayer(index){
+    State.game.activePlayerIndex = index;
+    State.game.player = State.game.roster[index];
+    UI.closeModal();
+    UI.log(`${State.game.player.name} ist jetzt dein aktiver Spieler.`);
+    UI.render();
   },
   showCareer(){
     const p = State.game.player;

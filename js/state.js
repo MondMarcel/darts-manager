@@ -6,7 +6,7 @@ const State = {
     this.game = {
       profileName: username, week:1, budget:0, reputation:0, trainerLevel:1, scoutLevel:1,
       managerLevel:1, managerXP:0, talentPoints:0, skills:[],
-      player:null, playerPrize:0, selectedTraining:null, trainedThisWeek:false, playedThisWeek:false,
+      player:null, roster:[], activePlayerIndex:0, playerPrize:0, selectedTraining:null, trainedThisWeek:false, playedThisWeek:false,
       qualifiedEvents:{}, tourcardUntilWeek:0, scoutingTask:null, scoutingReports:[], log:[], worldPlayers: Ranking.generateWorldPlayers()
     };
   }

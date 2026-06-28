@@ -2,6 +2,8 @@ const Game = {
   choosePlayer(index){
     State.game.player=JSON.parse(JSON.stringify(DATA.starters[index]));
     State.game.player.career = this.emptyCareer();
+    State.game.roster = [State.game.player];
+    State.game.activePlayerIndex = 0;
     document.getElementById("start-screen").classList.add("hidden");
     document.getElementById("game-screen").classList.remove("hidden");
     UI.log(`Vertrag unterschrieben: ${State.game.player.name} schließt sich dir für 2 Jahre an. Er startet ohne Tourcard.`);
