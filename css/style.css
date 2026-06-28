@@ -29,3 +29,7 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th,td{border-bottom:1p
 .skill-card.locked{opacity:.48}
 .skill-meta{color:#b9c7d4;font-size:13px;margin:6px 0}
 @media(max-width:900px){.skill-grid{grid-template-columns:1fr}}
+
+.tournament-ready{background:#b83b3b!important;color:#fff!important}
+.tournament-ready:hover{background:#d64a4a!important}
+button:disabled.tournament-ready{background:#42505c!important;color:#aab3bb!important}

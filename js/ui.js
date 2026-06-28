@@ -2,7 +2,11 @@ const UI = {
   euro(n){ return Math.floor(n).toLocaleString("de-DE")+" €"; },
   season(){ return Math.floor((State.game.week-1)/52)+1; },
   yearWeek(){ return ((State.game.week-1)%52)+1; },
-  currentTournament(){ return DATA.annualCalendar.find(t=>t.week===this.yearWeek()) || null; },
+  currentTournament(){
+    const scheduled = DATA.annualCalendar.find(t=>t.week===this.yearWeek());
+    if(scheduled) return scheduled;
+    return {week:this.yearWeek(), name:"Freiwilliges Pubturnier", category:"Pubturnier", fee:10, winnerPrize:50, access:"open", isPub:true, difficulty:[45,50,55,60]};
+  },
   hasTourcard(){ return State.game.week <= State.game.tourcardUntilWeek; },
   formLabel(f){ if(f>=80)return"Topform"; if(f>=65)return"Sehr gut"; if(f>=50)return"Gut"; if(f>=35)return"Normal"; if(f>=20)return"Schwach"; return"Krise"; },
   reputationLabel(v){ if(v>=8)return"Aufstrebend"; if(v>=3)return"Regional bekannt"; if(v<=-5)return"Angeschlagen"; return"Unbekannt"; },
@@ -70,7 +74,10 @@ const UI = {
     document.getElementById("flaw").textContent=p.flaw;
     document.getElementById("talent").setAttribute("data-tip", DATA.traitDescriptions[p.talent] || "Keine Beschreibung vorhanden.");
     document.getElementById("flaw").setAttribute("data-tip", DATA.traitDescriptions[p.flaw] || "Keine Beschreibung vorhanden.");
-    document.getElementById("playTournamentBtn").disabled = !t || g.playedThisWeek || !Tournaments.eligible(t) || g.budget < (t?t.fee:0);
+    const playBtn = document.getElementById("playTournamentBtn");
+    const tournamentPlayable = !!t && !g.playedThisWeek && Tournaments.eligible(t) && g.budget >= (t?t.fee:0);
+    playBtn.disabled = !tournamentPlayable;
+    playBtn.classList.toggle("tournament-ready", tournamentPlayable);
     ["trainLow","trainMed","trainHigh"].forEach(id=>document.getElementById(id).disabled=g.trainedThisWeek);
     this.renderLog();
     Save.save();
@@ -102,6 +109,7 @@ const UI = {
       const cls=t.week===this.yearWeek()?"calendar-row current":"calendar-row";
       body+=`<div class="${cls}"><div>${t.week}</div><div><b>${t.name}</b><div class="small">${Tournaments.accessText(t)}</div></div><div>${t.category}</div><div>${this.euro(t.fee)}</div></div>`;
     });
+    body += `<p class="small">Hinweis: In allen nicht aufgeführten Wochen kann optional ein Pubturnier gespielt werden. Startgeld: 10 €, Siegerpreisgeld: 50 €.</p>`;
     this.showModal("Turnierkalender", body);
   },
   showRanking(){

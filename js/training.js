@@ -23,7 +23,7 @@ const Training = {
     const gain=(.14+Math.random()*.26)*p.growth*room*cfg.mult*Manager.trainingMultiplier();
     success ? this.positive(g.selectedTraining,gain) : this.negative(g.selectedTraining);
     g.trainedThisWeek=true;
-    Manager.addXP(8, "Training durchgeführt");
+    Manager.addXP(3, "Training durchgeführt");
     g.selectedTraining=null;
     document.getElementById("trainingIntensity").classList.add("hidden");
     UI.render();

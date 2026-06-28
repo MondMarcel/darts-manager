@@ -1,6 +1,8 @@
 const DATA = {
-  version: "0.8.1",
+  version: "0.9.1",
   changelog: [
+    {version:"0.9.1", updates:["XP-Balancing überarbeitet","180er noch stärker an Average gekoppelt","Pubturniere geben weniger Fortschritt"]},
+    {version:"0.9", updates:["180er-Anzahl in Turnieren deutlich realistischer skaliert","9-Darter sind für schwächere Spieler praktisch ausgeschlossen und insgesamt deutlich seltener","Manager-XP stark reduziert und Levelkurve verlängert","Pubturniere in turnierfreien Wochen ergänzt: 10 € Startgeld, 50 € Siegerpreisgeld","Turnierbutton wird rot, wenn ein Turnier spielbar ist","Grundlage für Scouting-System weiter vorbereitet"]},
     {version:"0.8.1", updates:["Wochenwarnung repariert: Warnung erscheint jetzt, wenn Training oder ein spielbares Turnier übersprungen wird","Changelog auf Version 0.8.1 aktualisiert"]},
     {version:"0.8", updates:["Manager-Level und Manager-XP eingebaut","XP-Balancing deutlich langsamer gestaltet","Talentpunkte bei ausgewählten Level-Ups","Skilltree mit Trainer-, Scout-, Manager- und Mentor-Skills","Wochenwarnung beim Überspringen von Training oder spielbarem Turnier","Skilltree bereitet Scouting-System für Version 0.9 vor"]},
     {version:"0.7", updates:["Spieler ohne Tourcard erscheinen nicht mehr in der Order of Merit","Fiktive Weltranglisten-Namen überarbeitet und stärker an Nationalitäten angepasst","Tooltips für Talente und Makel eingebaut","Karriereleistungen-Button mit Statistiken ergänzt","Turniere erzeugen jetzt Karrierewerte wie 180er, 9-Darter, Titel und Preisgeldhistorie"]},
@@ -11,7 +13,7 @@ const DATA = {
     {version:"0.2", updates:["Training mit positivem/negativem Ausgang","Training nach Intensität","Abwechslungsreichere Eventtexte"]},
     {version:"0.1", updates:["Erste spielbare Webapp","Spielerauswahl","Spielerkarte","Training","Wochenturnier"]}
   ],
-  managerXPLevels: [0, 500, 1200, 2200, 3600, 5400, 7600, 10200, 13200, 16600, 20400, 24600, 29200, 34200, 39600, 45400, 51600, 58200, 65200, 72600, 80400],
+  managerXPLevels: [0,600,1400,2500,4000,5800,8000,10700,13900,17600,21800,26400,31500,37100,43200,49800,56900,64500,72600,81200,90300],
   talentPointLevels: [2,4,7,10,14,18],
   skills: [
     {id:"training_basic", branch:"Trainer", name:"Trainingsgrundlagen", cost:1, minLevel:2, desc:"Trainingseffekt +5%. Kleine, aber dauerhafte Verbesserung aller technischen Trainings."},
