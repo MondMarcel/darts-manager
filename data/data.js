@@ -1,6 +1,7 @@
 const DATA = {
-  version: "0.9.2.1",
+  version: "0.9.2.2",
   changelog: [
+    {version:"0.9.2.2", updates:["Training wirkt jetzt auf alle Spieler im Team","Trainingstexte zeigen an, wie viele Spieler eine positive Einheit hatten","Turniere bleiben weiterhin Aktion des aktiven Spielers"]},
     {version:"0.9.2.1", updates:["Gescoutete Spieler können jetzt verpflichtet werden","Freier Spielerslot wird geprüft","Einfache Teamliste eingebaut","Aktiver Spieler kann gewechselt werden"]},
     {version:"0.9.2", updates:["Scouting-System integriert","Scouting-Aufträge mit Land, Art und Kosten","Scouting-Ergebnisse erscheinen nach Wochenwechsel","Potenzialspanne abhängig vom Scouting-Level","Länderstärken beeinflussen Talentqualität","Kandidatenliste mit sichtbaren Werten, Talent und Makel"]},
     {version:"0.9.1.1", updates:["Changelog repariert","Versionshinweis unter dem Titel entfernt","Popupfenster besitzen jetzt ein X oben rechts","Popups schließen per ESC und Klick auf den Hintergrund"]},

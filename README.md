@@ -1,3 +1,3 @@
-# Darts Manager Alpha 0.9.2.1
+# Darts Manager Alpha 0.9.2.2
 
-Fix: Scouting-Spieler können verpflichtet werden, Teamliste und aktiver Spieler.
+Fix: Training gilt jetzt für alle Spieler im Team. Turniere bleiben beim aktiven Spieler.
