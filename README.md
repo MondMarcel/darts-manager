@@ -1,8 +1,5 @@
-# Darts Manager Alpha
+# Darts Manager Alpha 0.6
 
-Private Alpha-Version eines Darts-Manager-Browsergames.
+Strukturierte GitHub-Pages-Version.
 
-## Start
-
-Diese Version läuft vollständig im Browser über GitHub Pages.
-Die Hauptdatei ist `index.html`.
+Hinweis: Der Login speichert aktuell lokal im Browser. Für geräteübergreifenden Sync wird später ein Backend wie Supabase/Firebase benötigt.
