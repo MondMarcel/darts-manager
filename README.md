@@ -1,5 +1,5 @@
-# Darts Manager Alpha 0.7
+# Darts Manager Alpha 0.8
 
-Strukturierte GitHub-Pages-Version.
+Manager-Level, Talentpunkte, Skilltree, XP-System und Wochenwarnung.
 
-Änderungen: OOM nur mit Tourcard, fiktive Namensdatenbank, Trait-Tooltips, Karriereleistungen.
+Upload: gesamten Inhalt in GitHub hochladen und vorhandene Dateien ersetzen.

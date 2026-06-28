@@ -9,6 +9,23 @@ const Game = {
     UI.render();
   },
   nextWeek(){
+    const g = State.game;
+    const t = UI.currentTournament();
+    const warnings = [];
+
+    if(!g.trainedThisWeek) warnings.push("Du hast diese Woche noch kein Training absolviert.");
+    if(t && Tournaments.eligible(t) && !g.playedThisWeek && g.budget >= t.fee) {
+      warnings.push(`Das spielbare Turnier <b>${t.name}</b> wurde noch nicht gespielt.`);
+    }
+
+    if(warnings.length > 0){
+      UI.showConfirm(warnings.join("<br>") + "<br><br>Möchtest du trotzdem in die nächste Woche gehen?");
+      return;
+    }
+    this.forceNextWeek();
+  },
+  forceNextWeek(){
+    UI.closeConfirm();
     const g=State.game;
     g.week++;
     g.trainedThisWeek=false;

@@ -1,6 +1,7 @@
 const DATA = {
-  version: "0.7",
+  version: "0.8",
   changelog: [
+    {version:"0.8", updates:["Manager-Level und Manager-XP eingebaut","XP-Balancing deutlich langsamer gestaltet","Talentpunkte bei ausgewählten Level-Ups","Skilltree mit Trainer-, Scout-, Manager- und Mentor-Skills","Wochenwarnung beim Überspringen von Training oder spielbarem Turnier","Skilltree bereitet Scouting-System für Version 0.9 vor"]},
     {version:"0.7", updates:["Spieler ohne Tourcard erscheinen nicht mehr in der Order of Merit","Fiktive Weltranglisten-Namen überarbeitet und stärker an Nationalitäten angepasst","Tooltips für Talente und Makel eingebaut","Karriereleistungen-Button mit Statistiken ergänzt","Turniere erzeugen jetzt Karrierewerte wie 180er, 9-Darter, Titel und Preisgeldhistorie"]},
     {version:"0.6", updates:["Projekt professionell in Dateien strukturiert","Lokaler Login mit Profilname und Passwort","Speichern/Laden des Spielstands per localStorage","Wochenablauf auf Training + optional Turnier + Nächste Woche umgestellt","Changelog-Button oben rechts eingebaut"]},
     {version:"0.5", updates:["Turnierkalender","Tourcard-System","Q-School","200 simulierte Tourcardholder","Qualifier für große Turniere"]},
@@ -9,6 +10,35 @@ const DATA = {
     {version:"0.2", updates:["Training mit positivem/negativem Ausgang","Training nach Intensität","Abwechslungsreichere Eventtexte"]},
     {version:"0.1", updates:["Erste spielbare Webapp","Spielerauswahl","Spielerkarte","Training","Wochenturnier"]}
   ],
+  managerXPLevels: [0, 500, 1200, 2200, 3600, 5400, 7600, 10200, 13200, 16600, 20400, 24600, 29200, 34200, 39600, 45400, 51600, 58200, 65200, 72600, 80400],
+  talentPointLevels: [2,4,7,10,14,18],
+  skills: [
+    {id:"training_basic", branch:"Trainer", name:"Trainingsgrundlagen", cost:1, minLevel:2, desc:"Trainingseffekt +5%. Kleine, aber dauerhafte Verbesserung aller technischen Trainings."},
+    {id:"training_focus", branch:"Trainer", name:"Fokusarbeit", cost:1, minLevel:4, requires:"training_basic", desc:"Positives Training bringt zusätzlich etwas mehr Fortschritt."},
+    {id:"scout_benelux", branch:"Scout", name:"Benelux-Netzwerk", cost:1, minLevel:2, desc:"Schaltet Niederlande und Belgien fürs spätere Scouting frei."},
+    {id:"scout_core_nations", branch:"Scout", name:"Darts-Kernnationen", cost:1, minLevel:4, requires:"scout_benelux", desc:"Schaltet England, Wales und Schottland fürs spätere Scouting frei."},
+    {id:"scout_reports", branch:"Scout", name:"Bessere Berichte", cost:1, minLevel:7, desc:"Potenzialspannen werden im späteren Scouting genauer."},
+    {id:"manager_share", branch:"Manager", name:"Preisgeldverhandlung", cost:1, minLevel:4, desc:"Erhöht deinen Anteil an regionalem Preisgeld leicht von 50% auf 55%."},
+    {id:"manager_reputation", branch:"Manager", name:"Professionelles Auftreten", cost:1, minLevel:7, desc:"Ruf steigt bei Erfolgen etwas schneller."},
+    {id:"mentor_form", branch:"Mentor", name:"Formgespräche", cost:1, minLevel:2, desc:"Form-Einheiten sind etwas stärker."},
+    {id:"mentor_pressure", branch:"Mentor", name:"Druckbegleitung", cost:1, minLevel:7, requires:"mentor_form", desc:"Negative Formeffekte nach frühen Niederlagen werden leicht reduziert."}
+  ],
+  countryStrength: {
+    "Deutschland": {tier:1, density:62, talent:62, elite:55},
+    "Niederlande": {tier:2, density:90, talent:88, elite:84},
+    "Belgien": {tier:2, density:68, talent:70, elite:62},
+    "England": {tier:3, density:100, talent:94, elite:90},
+    "Wales": {tier:3, density:82, talent:80, elite:76},
+    "Schottland": {tier:3, density:80, talent:78, elite:74},
+    "Irland": {tier:4, density:58, talent:56, elite:48},
+    "Polen": {tier:4, density:52, talent:54, elite:45},
+    "Österreich": {tier:4, density:45, talent:46, elite:40},
+    "Australien": {tier:5, density:55, talent:57, elite:50},
+    "USA": {tier:5, density:28, talent:35, elite:28},
+    "Kanada": {tier:5, density:25, talent:32, elite:25},
+    "Frankreich": {tier:5, density:25, talent:30, elite:22},
+    "Dänemark": {tier:5, density:35, talent:38, elite:30}
+  },
   traitDescriptions: {
     "Keine sichtbare Eigenschaft": "Dieser Spieler hat aktuell kein besonderes sichtbares Talent.",
     "Kein sichtbarer Makel": "Dieser Spieler hat aktuell keinen sichtbaren Makel.",

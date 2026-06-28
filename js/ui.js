@@ -34,12 +34,23 @@ const UI = {
   },
   render() {
     const g=State.game, p=g.player; if(!p)return;
+    if(!g.managerLevel) g.managerLevel = 1;
+    if(!g.managerXP && g.managerXP !== 0) g.managerXP = 0;
+    if(!g.talentPoints) g.talentPoints = 0;
+    if(!g.skills) g.skills = [];
     p.age=p.startAge+Math.floor((g.week-1)/52);
     const t=this.currentTournament();
     document.getElementById("profileName").textContent=g.profileName;
     document.getElementById("week").textContent=`${g.week} (Saison ${this.season()}, KW ${this.yearWeek()})`;
     document.getElementById("budget").textContent=this.euro(g.budget);
     document.getElementById("reputation").textContent=this.reputationLabel(g.reputation);
+    const nextXP = Manager.xpForNext(g.managerLevel);
+    const floorXP = Manager.xpCurrentFloor(g.managerLevel);
+    const xpProgress = Math.max(0, Math.min(100, ((g.managerXP - floorXP) / (nextXP - floorXP)) * 100));
+    document.getElementById("managerLevel").textContent=g.managerLevel;
+    document.getElementById("managerXP").textContent=`${g.managerXP} / ${nextXP}`;
+    document.getElementById("talentPoints").textContent=g.talentPoints;
+    document.getElementById("xpFill").style.width=xpProgress+"%";
     document.getElementById("trainerLevel").textContent=g.trainerLevel;
     document.getElementById("scoutLevel").textContent=g.scoutLevel;
     document.getElementById("nextTournamentName").textContent=t?t.name:"Kein Turnier";
@@ -108,6 +119,36 @@ const UI = {
     rows.forEach((p,i)=>{ const mark=p.isUser?" style='background:#263849;font-weight:bold;'":""; body+=`<tr${mark}><td>${i+1}</td><td>${p.name}${p.isUser?" · Dein Spieler":""}</td><td>${p.nation}</td><td>${this.euro(p.prize)}</td></tr>`; });
     body+=`</tbody></table>`;
     this.showModal("Weltrangliste / Order of Merit", body);
+  },
+  showSkilltree(){
+    const g = State.game;
+    const branches = ["Trainer","Scout","Manager","Mentor"];
+    let body = `<p class="small">Talentpunkte: <b>${g.talentPoints || 0}</b>. Neue Punkte gibt es auf Level ${DATA.talentPointLevels.join(", ")}.</p>`;
+    body += `<div class="skill-grid">`;
+    branches.forEach(branch => {
+      body += `<div><h3>${branch}</h3>`;
+      DATA.skills.filter(s => s.branch === branch).forEach(skill => {
+        const owned = Manager.hasSkill(skill.id);
+        const locked = g.managerLevel < skill.minLevel || (skill.requires && !Manager.hasSkill(skill.requires));
+        const disabled = owned || locked || (g.talentPoints || 0) < skill.cost;
+        body += `<div class="skill-card ${locked ? "locked" : ""}">
+          <b>${owned ? "✅ " : ""}${skill.name}</b>
+          <div class="skill-meta">Kosten: ${skill.cost} Talentpunkt · Benötigt Level ${skill.minLevel}${skill.requires ? " · Voraussetzung" : ""}</div>
+          <div class="small">${skill.desc}</div>
+          <button ${disabled ? "disabled" : ""} onclick="Manager.buySkill('${skill.id}'); UI.closeModal(); UI.showSkilltree();">Freischalten</button>
+        </div>`;
+      });
+      body += `</div>`;
+    });
+    body += `</div>`;
+    this.showModal("Manager-Skilltree", body);
+  },
+  closeConfirm(){
+    document.getElementById("confirmModal").classList.add("hidden");
+  },
+  showConfirm(body){
+    document.getElementById("confirmBody").innerHTML = body;
+    document.getElementById("confirmModal").classList.remove("hidden");
   },
   showCareer(){
     const p = State.game.player;

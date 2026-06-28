@@ -20,9 +20,10 @@ const Training = {
     g.budget-=cfg.cost;
     const success=Math.random()<cfg.success;
     const room=Math.max(.1,(p.potential-p.avg)/30);
-    const gain=(.14+Math.random()*.26)*p.growth*room*cfg.mult;
+    const gain=(.14+Math.random()*.26)*p.growth*room*cfg.mult*Manager.trainingMultiplier();
     success ? this.positive(g.selectedTraining,gain) : this.negative(g.selectedTraining);
     g.trainedThisWeek=true;
+    Manager.addXP(8, "Training durchgeführt");
     g.selectedTraining=null;
     document.getElementById("trainingIntensity").classList.add("hidden");
     UI.render();
@@ -33,7 +34,7 @@ const Training = {
     if(type==="double"){ p.double=Math.min(55,p.double+gain*.75); UI.log(`${p.name} wirkt auf Doppel ruhiger. Die Abschlussqualität steigt leicht.`); }
     if(type==="checkout"){ p.checkout=Math.min(35,p.checkout+gain*.55); UI.log(`${p.name} findet bessere Wege bei hohen Resten. Checkouttraining erfolgreich.`); }
     if(type==="mental"){ p.form=Math.min(95,p.form+3+Math.random()*3); UI.log(`${p.name} arbeitet konzentriert an Routinen. Die Form verbessert sich.`); }
-    if(type==="formcamp"){ p.form=Math.min(98,p.form+6+Math.random()*5); UI.log(`Form-Einheit erfolgreich: ${p.name} wirkt frischer und selbstbewusster.`); }
+    if(type==="formcamp"){ p.form=Math.min(98,p.form+6+Math.random()*5+Manager.formCampBonus()); UI.log(`Form-Einheit erfolgreich: ${p.name} wirkt frischer und selbstbewusster.`); }
   },
   negative(type){
     const p=State.game.player;

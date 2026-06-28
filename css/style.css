@@ -21,3 +21,11 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th,td{border-bottom:1p
 .calendar-row.current{background:#263849;padding-left:8px;border-radius:8px}
 .tooltip{position:relative}.tooltip:hover:after{content:attr(data-tip);position:absolute;left:0;bottom:115%;width:260px;background:#0d141b;color:#f5f5f5;border:1px solid #2d445c;padding:9px;border-radius:8px;z-index:5;font-weight:normal;line-height:1.35}
 @media(max-width:900px){.grid,.dashboard{grid-template-columns:1fr}.sticky-panel{position:static}.calendar-row{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}}
+
+.xpbar{height:10px;background:#0d141b;border:1px solid #2d445c;border-radius:999px;overflow:hidden;margin:8px 0 10px}
+.xpbar div{height:100%;background:#6ab04c;width:0%}
+.skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.skill-card{background:#0d141b;border:1px solid #2d445c;border-radius:10px;padding:12px;margin:8px 0}
+.skill-card.locked{opacity:.48}
+.skill-meta{color:#b9c7d4;font-size:13px;margin:6px 0}
+@media(max-width:900px){.skill-grid{grid-template-columns:1fr}}
