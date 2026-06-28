@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Darts Manager Alpha 0.5</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#101820; color:#f5f5f5; margin:0; }
+    header { background:#17232f; padding:18px; border-bottom:2px solid #2d445c; }
+    .container { max-width:1250px; margin:0 auto; padding:18px; }
+    h1,h2,h3 { margin-top:0; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .dashboard { display:grid; grid-template-columns:1.15fr .85fr; gap:18px; align-items:start; }
+    .card { background:#17232f; border:1px solid #2d445c; border-radius:12px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,.25); }
+    .sticky-panel { position:sticky; top:14px; }
+    .player-choice { cursor:pointer; transition:.15s; }
+    .player-choice:hover { transform:translateY(-3px); border-color:#6ab04c; }
+    .hidden { display:none !important; }
+    button { background:#6ab04c; color:#08110a; border:0; padding:9px 12px; border-radius:8px; font-weight:bold; cursor:pointer; margin:4px 4px 4px 0; }
+    button:hover { background:#7ed957; }
+    button:disabled { background:#42505c; color:#aab3bb; cursor:not-allowed; }
+    .secondary { background:#2d445c; color:#f5f5f5; }
+    .danger { background:#a84444; color:#fff; }
+    .stat { display:flex; justify-content:space-between; gap:12px; border-bottom:1px solid #2d445c; padding:7px 0; }
+    .tag { display:inline-block; background:#263849; padding:5px 9px; border-radius:999px; margin:3px 3px 3px 0; font-size:13px; }
+    .good { background:#2e7d32; } .bad { background:#8e2f2f; } .gold { background:#a17820; }
+    .small { color:#b9c7d4; font-size:14px; line-height:1.45; }
+    .money { color:#ffd166; font-weight:bold; }
+    .log { background:#0d141b; border-radius:8px; padding:12px; max-height:650px; overflow-y:auto; line-height:1.5; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th,td { border-bottom:1px solid #2d445c; padding:8px; text-align:left; }
+    th { color:#b9c7d4; font-size:13px; }
+    .modal { position:fixed; inset:0; background:rgba(0,0,0,.72); display:flex; align-items:center; justify-content:center; padding:20px; z-index:10; }
+    .modal-content { background:#17232f; border:1px solid #2d445c; border-radius:12px; padding:18px; max-width:950px; width:100%; max-height:85vh; overflow:auto; }
+    .modal.hidden { display:none; }
+    .calendar-row { display:grid; grid-template-columns:70px 1fr 110px 110px; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid #2d445c; }
+    .calendar-row.current { background:#263849; padding-left:8px; border-radius:8px; }
+    .tooltip { position:relative; }
+    .tooltip:hover::after {
+      content:attr(data-tip); position:absolute; left:0; bottom:115%; width:260px; background:#0d141b; color:#f5f5f5;
+      border:1px solid #2d445c; padding:9px; border-radius:8px; z-index:5; font-weight:normal; line-height:1.35;
+    }
+    @media (max-width:900px){ .grid,.dashboard{grid-template-columns:1fr;} .sticky-panel{position:static;} .calendar-row{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <h1>Darts Manager Alpha 0.5</h1>
+    <div class="small">Regionale Karriere → Q-School → Tourcard → größere Turniere. Potenzial bleibt verborgen.</div>
+  </div>
+</header>
+
+<div class="container">
+  <section id="start-screen">
+    <h2>Wähle deinen ersten Spieler</h2>
+    <p class="small">Alle Spieler sind kostenlos und starten ohne Tourcard.</p>
+    <div class="grid" id="choices"></div>
+  </section>
+
+  <section id="game-screen" class="hidden">
+    <div class="dashboard">
+      <div>
+        <div class="grid">
+          <div class="card">
+            <h2>Manager</h2>
+            <div class="stat"><span>Woche</span><strong id="week">1</strong></div>
+            <div class="stat"><span>Budget</span><strong class="money" id="budget">0 €</strong></div>
+            <div class="stat"><span>Ruf</span><strong id="reputation">Unbekannt</strong></div>
+            <div class="stat"><span>Trainer-Level</span><strong id="trainerLevel">1</strong></div>
+            <div class="stat"><span>Scouting-Level</span><strong id="scoutLevel">1</strong></div>
+            <div class="stat"><span>Spielerslots</span><strong>1 / 2</strong></div>
+            <hr>
+            <h3>Diese Woche</h3>
+            <div class="stat"><span>Turnier</span><strong id="nextTournamentName"></strong></div>
+            <div class="stat"><span>Kategorie</span><strong id="nextTournamentCategory"></strong></div>
+            <div class="stat"><span>Gebühr</span><strong id="entryFee"></strong></div>
+            <div class="stat"><span>Siegerpreisgeld</span><strong id="nextTournamentPrize"></strong></div>
+            <button class="secondary" onclick="showCalendar()">Turnierkalender</button>
+            <button class="secondary" onclick="showRanking()">Weltrangliste</button>
+          </div>
+
+          <div class="card">
+            <h2 id="playerName"></h2>
+            <div class="small" id="playerMeta"></div>
+            <hr>
+            <div class="stat"><span>Tourcard</span><strong id="tourcard"></strong></div>
+            <div class="stat"><span>Saison-Preisgeld</span><strong id="playerPrize"></strong></div>
+            <div class="stat"><span>Saison-Average</span><strong id="avg"></strong></div>
+            <div class="stat"><span>Doppelquote</span><strong id="double"></strong></div>
+            <div class="stat"><span>180er pro Leg</span><strong id="maxes"></strong></div>
+            <div class="stat"><span>Checkout 100+</span><strong id="checkout"></strong></div>
+            <div class="stat"><span>Form</span><strong id="form"></strong></div>
+            <div style="margin-top:10px;">
+              <span class="tag good" id="talent"></span>
+              <span class="tag bad" id="flaw"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <h2>Wochenaktion</h2>
+          <p class="small">Pro Woche ist genau <b>ein Training</b> möglich. Wenn ein Turnier stattfindet und dein Spieler spielberechtigt ist, kann er zusätzlich teilnehmen.</p>
+
+          <h3>Training</h3>
+          <button class="tooltip" data-tip="Verbessert Average, hohe Aufnahmen und langfristig 180er-Gefahr." onclick="selectTrainingType('scoring')">Scoring</button>
+          <button class="tooltip" data-tip="Verbessert Doppelquote und Abschlussqualität in Legs." onclick="selectTrainingType('double')">Doppel</button>
+          <button class="tooltip" data-tip="Verbessert Checkoutquote bei Resten über 100 und Finishwege." onclick="selectTrainingType('checkout')">Checkout</button>
+          <button class="tooltip" data-tip="Verbessert Matchruhe und schützt vor Formkrisen." onclick="selectTrainingType('mental')">Mental</button>
+          <button class="tooltip secondary" data-tip="Gezielter Form-Push: keine technischen Fortschritte, aber kurzfristig bessere Form. Kann einmal pro Woche als Training gewählt werden." onclick="selectTrainingType('formcamp')">Form-Einheit</button>
+
+          <div id="trainingIntensity" class="hidden" style="margin-top:12px;">
+            <h3>Intensität</h3>
+            <p class="small" id="selectedTrainingLabel"></p>
+            <button id="trainLow" onclick="trainSelected('low')">Niedrig · 0 € · 80%</button>
+            <button id="trainMed" onclick="trainSelected('medium')">Mittel · 150 € · 90%</button>
+            <button id="trainHigh" onclick="trainSelected('high')">Hoch · 400 € · 100%</button>
+          </div>
+
+          <hr>
+          <button id="playTournamentBtn" class="secondary" onclick="playTournament()">Turnier dieser Woche spielen</button>
+          <button id="advanceBtn" class="secondary" onclick="advanceWeek()">Woche beenden</button>
+        </div>
+      </div>
+
+      <div class="card sticky-panel">
+        <h2>Nachrichten & Spielverlauf</h2>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="rankingModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Weltrangliste / Order of Merit</h2>
+      <p class="small">Rangliste nach gewonnenem Preisgeld. Für Alpha 0.5 simulieren wir 200 Tourcardholder plus deinen Spieler.</p>
+      <div id="rankingTable"></div>
+      <button onclick="hideRanking()">Schließen</button>
+    </div>
+  </div>
+
+  <div id="calendarModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Turnierkalender</h2>
+      <p class="small">Nicht jede Woche findet ein Turnier statt. Q-School gibt es einmal pro Jahr und kostet 500 €.</p>
+      <div id="calendarTable"></div>
+      <button onclick="hideCalendar()">Schließen</button>
+    </div>
+  </div>
+
+  <div id="tournamentModal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="tournamentPopupTitle">Turnierbericht</h2>
+      <p class="small" id="tournamentPopupSummary"></p>
+      <div id="tournamentResults"></div>
+      <button onclick="hideTournamentReport()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const starters = [
+  {name:"Finn Adler", age:18, startAge:18, nation:"Deutschland", type:"Ausgeglichen", avg:72.8, double:29, maxes:0.09, checkout:8, form:50, talent:"Keine sichtbare Eigenschaft", flaw:"Kein sichtbarer Makel", potential:78, growth:.75, report:"Solider Eindruck. Keine auffälligen Schwächen, aber auch kein sofort erkennbarer X-Faktor."},
+  {name:"Jamie Brooks", age:19, startAge:19, nation:"England", type:"Scorer", avg:75.4, double:24, maxes:0.18, checkout:6, form:45, talent:"Power Scorer", flaw:"Wacklige Doppel", potential:86, growth:.62, report:"Kann Spiele mit hohen Scores dominieren, verschenkt aber viele Legs auf Doppel."},
+  {name:"Lars van Dijk", age:17, startAge:17, nation:"Niederlande", type:"Mentalspieler", avg:70.9, double:34, maxes:0.05, checkout:11, form:58, talent:"Ruhige Hand", flaw:"Langsamer Starter", potential:92, growth:.82, report:"Wirkt reif für sein Alter. Scoring noch ausbaufähig, aber auf Doppel erstaunlich stabil."}
+];
+
+const annualCalendar = [
+  {week:1, name:"New Year Local Open", category:"Regional frei", fee:0, winnerPrize:350, access:"open", difficulty:[62,66,70,74]},
+  {week:3, name:"Q-School Stage", category:"Q-School", fee:500, winnerPrize:0, access:"qschool", difficulty:[72,76,80,84,88]},
+  {week:5, name:"Rhine Pub Trophy", category:"Regional frei", fee:0, winnerPrize:250, access:"open", difficulty:[60,64,68,72]},
+  {week:8, name:"North District Classic", category:"Regional Gebühr", fee:80, winnerPrize:700, access:"open", difficulty:[66,70,74,78]},
+  {week:12, name:"European Qualifier I", category:"Qualifier", fee:120, winnerPrize:0, access:"qualifier", unlocks:"European Hall Series", difficulty:[70,74,78,82]},
+  {week:13, name:"European Hall Series", category:"Tour/Qualifier Event", fee:0, winnerPrize:3500, access:"tour_or_qualified", difficulty:[76,81,86,91,95]},
+  {week:17, name:"Spring Board Masters", category:"Regional Gebühr", fee:100, winnerPrize:900, access:"open", difficulty:[68,72,76,80]},
+  {week:22, name:"Players Circuit 1", category:"Tourcard Event", fee:0, winnerPrize:2500, access:"tour", difficulty:[76,80,84,88,92]},
+  {week:26, name:"Summer Local Open", category:"Regional frei", fee:0, winnerPrize:300, access:"open", difficulty:[62,66,70,74]},
+  {week:31, name:"Major Qualifier", category:"Qualifier", fee:150, winnerPrize:0, access:"qualifier", unlocks:"Continental Grand Prix", difficulty:[72,76,80,84]},
+  {week:32, name:"Continental Grand Prix", category:"Major", fee:0, winnerPrize:6000, access:"tour_or_qualified", difficulty:[78,84,89,94,98]},
+  {week:38, name:"Autumn Challenge", category:"Regional Gebühr", fee:120, winnerPrize:1200, access:"open", difficulty:[70,74,78,82]},
+  {week:44, name:"Players Circuit 2", category:"Tourcard Event", fee:0, winnerPrize:3000, access:"tour", difficulty:[77,81,85,89,93]},
+  {week:49, name:"Winter County Open", category:"Regional frei", fee:0, winnerPrize:400, access:"open", difficulty:[64,68,72,76]}
+];
+
+const state = {
+  week:1, budget:0, reputation:0, trainerLevel:1, scoutLevel:1,
+  player:null, playerPrize:0, selectedTraining:null,
+  trainedThisWeek:false, playedThisWeek:false, qualifiedEvents:{}, tourcardUntilWeek:0
+};
+
+let worldPlayers = [];
+
+function generateWorldPlayers(){
+  const first=["Luke","Michael","Gerwyn","Peter","Rob","Damon","Danny","Stephen","Chris","Ross","Martin","Josh","Ryan","Dimitri","Dirk","Joe","Gabriel","Nathan","Gary","Dave","Ricky","Alan","Kim","Krzysztof","Jonny","Madars","Keegan","Mervyn","Raymond","Brendan"];
+  const last=["Cross","Smith","Price","Wright","Clayton","Heta","Noppert","Bunting","Dobey","Smithson","Schindler","Rock","Searle","King","van Bergen","Cullen","Clemens","Aspin","Anderson","Chiswell","Evans","Soutar","Huybrechts","Ratajski","Barker","Razma","Brown","Lewis","Menzies","Wattimena"];
+  const nations=["England","Niederlande","Wales","Schottland","Deutschland","Belgien","Australien","Polen","Irland","Österreich","Frankreich","Dänemark"];
+  worldPlayers = [];
+  for(let i=0;i<200;i++){
+    const base = Math.max(1000, Math.floor(220000 * Math.exp(-i/38) + Math.random()*4500));
+    worldPlayers.push({name:first[i%first.length]+" "+last[(i*7)%last.length], nation:nations[i%nations.length], prize:base});
+  }
+}
+generateWorldPlayers();
+
+function euro(n){ return Math.floor(n).toLocaleString("de-DE")+" €"; }
+function yearWeek(){ return ((state.week-1)%52)+1; }
+function season(){ return Math.floor((state.week-1)/52)+1; }
+function currentTournament(){ return annualCalendar.find(t=>t.week===yearWeek()) || null; }
+function hasTourcard(){ return state.week <= state.tourcardUntilWeek; }
+
+function renderChoices(){
+  const wrap=document.getElementById("choices"); wrap.innerHTML="";
+  starters.forEach((p,i)=>{
+    const div=document.createElement("div"); div.className="card player-choice"; div.onclick=()=>choosePlayer(i);
+    div.innerHTML=`<h3>${p.name}</h3><div class="small">${p.age} Jahre · ${p.nation} · ${p.type}</div><hr>
+    <div class="stat"><span>Saison-Average</span><strong>${p.avg.toFixed(1)}</strong></div>
+    <div class="stat"><span>Doppelquote</span><strong>${p.double}%</strong></div>
+    <div class="stat"><span>180er pro Leg</span><strong>${p.maxes.toFixed(2)}</strong></div>
+    <div class="stat"><span>Checkout 100+</span><strong>${p.checkout}%</strong></div>
+    <div style="margin-top:10px;"><span class="tag good">${p.talent}</span><span class="tag bad">${p.flaw}</span></div>
+    <p class="small">${p.report}</p>`;
+    wrap.appendChild(div);
+  });
+}
+
+function choosePlayer(index){
+  state.player=JSON.parse(JSON.stringify(starters[index]));
+  document.getElementById("start-screen").classList.add("hidden");
+  document.getElementById("game-screen").classList.remove("hidden");
+  log(`Vertrag unterschrieben: ${state.player.name} schließt sich dir für 2 Jahre an. Er startet ohne Tourcard.`);
+  log(`Ziel: regionale Turniere spielen, Geld verdienen und in Woche 3 die Q-School finanzieren.`);
+  render();
+}
+
+function reputationLabel(v){ if(v>=8)return"Aufstrebend"; if(v>=3)return"Regional bekannt"; if(v<=-5)return"Angeschlagen"; return"Unbekannt"; }
+
+function eligible(t){
+  if(!t) return false;
+  if(t.access==="open") return true;
+  if(t.access==="qschool") return !hasTourcard();
+  if(t.access==="tour") return hasTourcard();
+  if(t.access==="qualifier") return !hasTourcard();
+  if(t.access==="tour_or_qualified") return hasTourcard() || state.qualifiedEvents[t.name];
+  return false;
+}
+
+function render(){
+  const p=state.player; if(!p)return;
+  p.age=p.startAge+Math.floor((state.week-1)/52);
+  const t=currentTournament();
+  document.getElementById("week").textContent=`${state.week} (Saison ${season()}, KW ${yearWeek()})`;
+  document.getElementById("budget").textContent=euro(state.budget);
+  document.getElementById("reputation").textContent=reputationLabel(state.reputation);
+  document.getElementById("trainerLevel").textContent=state.trainerLevel;
+  document.getElementById("scoutLevel").textContent=state.scoutLevel;
+  document.getElementById("nextTournamentName").textContent=t?t.name:"Kein Turnier";
+  document.getElementById("nextTournamentCategory").textContent=t?t.category:"-";
+  document.getElementById("entryFee").textContent=t?euro(t.fee):"-";
+  document.getElementById("nextTournamentPrize").textContent=t?euro(t.winnerPrize):"-";
+  document.getElementById("playerName").textContent=p.name;
+  document.getElementById("playerMeta").textContent=`${p.age} Jahre · ${p.nation} · ${p.type}`;
+  document.getElementById("tourcard").textContent=hasTourcard()?`Ja, bis Woche ${state.tourcardUntilWeek}`:"Nein";
+  document.getElementById("playerPrize").textContent=euro(state.playerPrize);
+  document.getElementById("avg").textContent=p.avg.toFixed(1);
+  document.getElementById("double").textContent=p.double.toFixed(1)+"%";
+  document.getElementById("maxes").textContent=p.maxes.toFixed(2);
+  document.getElementById("checkout").textContent=p.checkout.toFixed(1)+"%";
+  document.getElementById("form").textContent=formLabel(p.form);
+  document.getElementById("talent").textContent=p.talent;
+  document.getElementById("flaw").textContent=p.flaw;
+
+  document.getElementById("playTournamentBtn").disabled = !t || state.playedThisWeek || !eligible(t) || state.budget < (t?t.fee:0);
+  document.getElementById("advanceBtn").disabled = false;
+  ["trainLow","trainMed","trainHigh"].forEach(id=>document.getElementById(id).disabled=state.trainedThisWeek);
+}
+
+function formLabel(f){ if(f>=80)return"Topform"; if(f>=65)return"Sehr gut"; if(f>=50)return"Gut"; if(f>=35)return"Normal"; if(f>=20)return"Schwach"; return"Krise"; }
+
+function selectTrainingType(type){
+  if(state.trainedThisWeek){ log("Training ist diese Woche bereits absolviert."); return; }
+  state.selectedTraining=type;
+  const labels={
+    scoring:"Scoringtraining: verbessert Average und 180er-Gefahr.",
+    double:"Doppeltraining: verbessert Doppelquote.",
+    checkout:"Checkouttraining: verbessert High-Finishes.",
+    mental:"Mentaltraining: stabilisiert Form und Druckresistenz.",
+    formcamp:"Form-Einheit: kurzfristiger Form-Push, aber kein technischer Fortschritt."
+  };
+  document.getElementById("selectedTrainingLabel").textContent=labels[type];
+  document.getElementById("trainingIntensity").classList.remove("hidden");
+}
+
+function trainSelected(intensity){
+  if(state.trainedThisWeek){ log("Pro Woche ist nur ein Training möglich."); return; }
+  const cfg={low:{cost:0,success:.80,mult:.75,label:"niedrig"},medium:{cost:150,success:.90,mult:1,label:"mittel"},high:{cost:400,success:1,mult:1.25,label:"hoch"}}[intensity];
+  if(state.budget<cfg.cost){ log(`Nicht genug Budget. Benötigt: ${euro(cfg.cost)}.`); return; }
+  state.budget-=cfg.cost;
+  const success=Math.random()<cfg.success;
+  const p=state.player;
+  const room=Math.max(.1,(p.potential-p.avg)/30);
+  const gain=(.14+Math.random()*.26)*p.growth*room*cfg.mult;
+  if(success) positiveTraining(state.selectedTraining,gain); else negativeTraining(state.selectedTraining);
+  state.trainedThisWeek=true;
+  state.selectedTraining=null;
+  document.getElementById("trainingIntensity").classList.add("hidden");
+  render();
+}
+
+function positiveTraining(type,gain){
+  const p=state.player;
+  if(type==="scoring"){ p.avg=Math.min(p.potential,p.avg+gain*1.15); p.maxes+=.002+Math.random()*.004; log(`${p.name} trifft im Scoring sauberer. Die Einheit bringt sichtbaren Fortschritt.`); }
+  if(type==="double"){ p.double=Math.min(55,p.double+gain*.75); log(`${p.name} wirkt auf Doppel ruhiger. Die Abschlussqualität steigt leicht.`); }
+  if(type==="checkout"){ p.checkout=Math.min(35,p.checkout+gain*.55); log(`${p.name} findet bessere Wege bei hohen Resten. Checkouttraining erfolgreich.`); }
+  if(type==="mental"){ p.form=Math.min(95,p.form+3+Math.random()*3); log(`${p.name} arbeitet konzentriert an Routinen. Die Form verbessert sich.`); }
+  if(type==="formcamp"){ p.form=Math.min(98,p.form+6+Math.random()*5); log(`Form-Einheit erfolgreich: ${p.name} wirkt frischer und selbstbewusster.`); }
+}
+
+function negativeTraining(type){
+  const p=state.player;
+  p.form=Math.max(15,p.form-(1+Math.random()*2));
+  const texts={
+    scoring:"Das Scoringtraining bleibt unruhig. Kaum Fortschritt.",
+    double:"Die Doppel sitzen heute nicht. Die Einheit bringt wenig.",
+    checkout:"Bei hohen Resten fehlt Klarheit. Keine gute Checkout-Woche.",
+    mental:"Mental erreicht die Einheit ihn kaum. Die Form sinkt leicht.",
+    formcamp:"Die Form-Einheit verpufft. Er wirkt eher frustriert als befreit."
+  };
+  log(`${p.name}: ${texts[type]}`);
+}
+
+function playTournament(){
+  const t=currentTournament(), p=state.player;
+  if(!t){ log("Diese Woche findet kein Turnier statt."); return; }
+  if(state.playedThisWeek){ log("Das Turnier dieser Woche wurde bereits gespielt."); return; }
+  if(!eligible(t)){ log(`${p.name} ist für ${t.name} nicht spielberechtigt.`); return; }
+  if(state.budget<t.fee){ log(`Nicht genug Budget für die Teilnahmegebühr (${euro(t.fee)}).`); return; }
+  state.budget-=t.fee;
+  state.playedThisWeek=true;
+
+  const strength=p.avg+(p.double-30)*.35+(p.checkout-10)*.25+(p.form-50)*.12;
+  let rounds=0, prize=0, matches=[];
+  const roundNames=["Runde 1","Achtelfinale","Viertelfinale","Halbfinale","Finale"];
+
+  for(let i=0;i<t.difficulty.length;i++){
+    const chance=50+(strength-t.difficulty[i])*4;
+    const won=Math.random()*100<chance;
+    matches.push({round:roundNames[i], opponent:generateOpponentName(), score:matchScore(i,won), avg:Math.max(55,p.avg+(Math.random()*8-4)+(p.form-50)*.05).toFixed(1), double:Math.max(12,Math.min(60,p.double+(Math.random()*10-5))).toFixed(1)+"%"});
+    if(won){ rounds++; prize += Math.floor((t.winnerPrize/10)+i*(t.winnerPrize/12)); } else break;
+  }
+  if(rounds===t.difficulty.length) prize=t.winnerPrize;
+
+  let summary="";
+  if(t.access==="qschool"){
+    if(rounds>=4){
+      state.tourcardUntilWeek=state.week+104;
+      state.reputation+=3;
+      summary=`Q-School geschafft! ${p.name} erhält eine Tourcard für 2 Jahre.`;
+      log(`Q-School: ${p.name} erspielt sich die Tourcard. Jetzt öffnen sich die großen Turniere.`);
+    } else {
+      summary=`Q-School verpasst. ${p.name} gewinnt ${rounds} Match(es), aber es reicht nicht für die Tourcard.`;
+      log(`Q-School: ${p.name} verpasst die Tourcard. Nächste Chance in der kommenden Saison.`);
+    }
+  } else if(t.access==="qualifier"){
+    if(rounds===t.difficulty.length){
+      state.qualifiedEvents[t.unlocks]=true;
+      state.reputation+=1;
+      summary=`Qualifier gewonnen! ${p.name} ist für ${t.unlocks} qualifiziert.`;
+      log(`${t.name}: Qualifier gewonnen. ${p.name} darf bei ${t.unlocks} starten.`);
+    } else {
+      summary=`Qualifier verpasst. ${p.name} gewinnt ${rounds} Match(es).`;
+      log(`${t.name}: ${p.name} verpasst die Qualifikation.`);
+    }
+  } else {
+    state.playerPrize+=prize;
+    state.budget+=Math.floor(prize*.5);
+    if(rounds===0){ p.form=Math.max(20,p.form-4); summary=`Frühes Aus. Preisgeld: ${euro(prize)}.`; log(`${t.name}: Aus in Runde 1.`); }
+    else if(rounds<t.difficulty.length){ p.form=Math.min(90,p.form+Math.min(5,rounds)); summary=`${p.name} gewinnt ${rounds} Match(es). Preisgeld: ${euro(prize)}. Dein Anteil: ${euro(Math.floor(prize*.5))}.`; log(`${t.name}: ${summary}`); }
+    else { p.form=Math.min(98,p.form+9); state.reputation+=3; summary=`Turniersieg! Preisgeld: ${euro(prize)}. Dein Anteil: ${euro(Math.floor(prize*.5))}.`; log(`${t.name}: ${p.name} gewinnt das Turnier.`); }
+  }
+
+  worldPlayers.forEach((wp,i)=>{ wp.prize += Math.floor(Math.random()*(i<64?1800:700)); });
+  showTournamentReport(t.name, summary, matches);
+  render();
+}
+
+function advanceWeek(){
+  state.week++;
+  state.trainedThisWeek=false;
+  state.playedThisWeek=false;
+  // Top-64-Regel stark vereinfacht: läuft die Tourcard aus, bleibt sie nur bei Top 64 erhalten.
+  if(state.week===state.tourcardUntilWeek+1 && state.tourcardUntilWeek>0){
+    const rank=getRank();
+    if(rank<=64){ state.tourcardUntilWeek=state.week+104; log(`Top-64-Regel: ${state.player.name} behält die Tourcard für weitere 2 Jahre.`); }
+    else { log(`Tourcard abgelaufen: ${state.player.name} war nicht in den Top 64 und verliert die Tourcard.`); }
+  }
+  render();
+}
+
+function getRank(){
+  const rows=[...worldPlayers,{name:state.player.name,nation:state.player.nation,prize:state.playerPrize,isUser:true}].sort((a,b)=>b.prize-a.prize);
+  return rows.findIndex(r=>r.isUser)+1;
+}
+
+function showRanking(){
+  const rows=[...worldPlayers,{name:state.player.name,nation:state.player.nation,prize:state.playerPrize,isUser:true}].sort((a,b)=>b.prize-a.prize);
+  let html=`<table><thead><tr><th>Rang</th><th>Spieler</th><th>Nation</th><th>Preisgeld</th></tr></thead><tbody>`;
+  rows.forEach((p,i)=>{ const mark=p.isUser?" style='background:#263849;font-weight:bold;'":""; html+=`<tr${mark}><td>${i+1}</td><td>${p.name}${p.isUser?" · Dein Spieler":""}</td><td>${p.nation}</td><td>${euro(p.prize)}</td></tr>`; });
+  html+=`</tbody></table>`;
+  document.getElementById("rankingTable").innerHTML=html;
+  document.getElementById("rankingModal").classList.remove("hidden");
+}
+function hideRanking(){ document.getElementById("rankingModal").classList.add("hidden"); }
+
+function showCalendar(){
+  let html=`<div class="calendar-row small"><b>KW</b><b>Turnier</b><b>Kategorie</b><b>Gebühr</b></div>`;
+  annualCalendar.forEach(t=>{
+    const cls=t.week===yearWeek()?"calendar-row current":"calendar-row";
+    html+=`<div class="${cls}"><div>${t.week}</div><div><b>${t.name}</b><div class="small">${accessText(t)}</div></div><div>${t.category}</div><div>${euro(t.fee)}</div></div>`;
+  });
+  document.getElementById("calendarTable").innerHTML=html;
+  document.getElementById("calendarModal").classList.remove("hidden");
+}
+function hideCalendar(){ document.getElementById("calendarModal").classList.add("hidden"); }
+function accessText(t){
+  if(t.access==="open") return "Frei spielbar";
+  if(t.access==="qschool") return "Nur ohne Tourcard, 1x jährlich";
+  if(t.access==="tour") return "Nur mit Tourcard";
+  if(t.access==="qualifier") return "Qualifier für Spieler ohne Tourcard";
+  if(t.access==="tour_or_qualified") return "Tourcard oder gewonnener Qualifier";
+  return "";
+}
+
+function showTournamentReport(title,summary,matches){
+  document.getElementById("tournamentPopupTitle").textContent=title;
+  document.getElementById("tournamentPopupSummary").textContent=summary;
+  let table=`<table><thead><tr><th>Runde</th><th>Gegner</th><th>Ergebnis</th><th>Average</th><th>Doppel</th></tr></thead><tbody>`;
+  matches.forEach(m=>table+=`<tr><td>${m.round}</td><td>${m.opponent}</td><td>${m.score}</td><td>${m.avg}</td><td>${m.double}</td></tr>`);
+  table+=`</tbody></table>`;
+  document.getElementById("tournamentResults").innerHTML=table;
+  document.getElementById("tournamentModal").classList.remove("hidden");
+}
+function hideTournamentReport(){ document.getElementById("tournamentModal").classList.add("hidden"); }
+
+function generateOpponentName(){
+  const first=["Ryan","Max","Theo","Nathan","Jules","Adam","Simon","Marco","Viktor","Elias","Jack","Milan","Owen","Luca","Nico","Terry"];
+  const last=["Stone","Bakker","Reed","Wagner","Hughes","Smit","Klein","Moreau","Nielsen","Fischer","Taylor","Vos","Ward","Dekker"];
+  return randomText(first)+" "+randomText(last);
+}
+function matchScore(i,won){ const f=[["4:1","2:4"],["5:2","3:5"],["6:3","4:6"],["7:4","5:7"],["8:5","6:8"]][Math.min(i,4)]; return won?f[0]:f[1]; }
+function randomText(list){ return list[Math.floor(Math.random()*list.length)]; }
+function log(text){ const box=document.getElementById("log"); const entry=document.createElement("div"); entry.innerHTML=`<strong>Woche ${state.week}:</strong> ${text}`; box.prepend(entry); }
+
+renderChoices();
+</script>
+</body>
+</html>
