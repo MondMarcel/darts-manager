@@ -16,6 +16,42 @@ const Tournaments = {
     if(t.access==="tour_or_qualified")return"Tourcard oder gewonnener Qualifier";
     return"";
   },
+  previewCurrent(){
+    const g=State.game, p=g.player, t=UI.currentTournament();
+    if(!t){ UI.log("Diese Woche findet kein Turnier statt."); return; }
+    if(g.playedThisWeek){ UI.log("Das Turnier dieser Woche wurde bereits gespielt."); return; }
+    if(!this.eligible(t)){ UI.log(`${p.name} ist für ${t.name} nicht spielberechtigt.`); return; }
+    if(g.budget<t.fee){ UI.log(`Nicht genug Budget für die Teilnahmegebühr (${UI.euro(t.fee)}).`); return; }
+
+    const roundNames=["Runde 1","Achtelfinale","Viertelfinale","Halbfinale","Finale"];
+    let rows = "";
+    t.difficulty.forEach((d,i)=>{
+      rows += `<tr><td>${roundNames[i] || "Runde "+(i+1)}</td><td>${Math.max(40,d-3)}–${d+3}</td><td>${this.difficultyLabel(d)}</td></tr>`;
+    });
+
+    const body = `<p class="small">Prüfe vor der Teilnahme, ob sich Startgeld und sportliches Risiko lohnen.</p>
+      <table>
+        <tbody>
+          <tr><td>Kategorie</td><td>${t.category}</td></tr>
+          <tr><td>Startgeld</td><td>${UI.euro(t.fee)}</td></tr>
+          <tr><td>Siegerpreisgeld</td><td>${UI.euro(t.winnerPrize)}</td></tr>
+          <tr><td>Dein Spieler-Average</td><td>${p.avg.toFixed(1)}</td></tr>
+        </tbody>
+      </table>
+      <h3>Erwartetes Gegnerniveau</h3>
+      <table><thead><tr><th>Runde</th><th>Erwarteter Average</th><th>Einschätzung</th></tr></thead><tbody>${rows}</tbody></table>
+      <button onclick="UI.closeModal(); Tournaments.playCurrent();">Teilnehmen</button>
+      <button class="secondary" onclick="UI.closeModal()">Abbrechen</button>`;
+    UI.showModal(t.name + " – Vorschau", body);
+  },
+  difficultyLabel(avg){
+    if(avg < 60) return "Kneipenniveau";
+    if(avg < 70) return "Amateur";
+    if(avg < 80) return "Regional stark";
+    if(avg < 88) return "Pro-Tour-Niveau";
+    if(avg < 95) return "Sehr stark";
+    return "Elite";
+  },
   playCurrent(){
     const g=State.game, p=g.player, t=UI.currentTournament();
     if(!p.career) p.career = Game.emptyCareer();

@@ -15,7 +15,7 @@ const Training = {
   run(intensity){
     const g=State.game;
     if(g.trainedThisWeek){ UI.log("Pro Woche ist nur ein Training möglich."); return; }
-    const cfg={low:{cost:0,success:.80,mult:.75},medium:{cost:150,success:.90,mult:1},high:{cost:400,success:1,mult:1.25}}[intensity];
+    const cfg={low:{cost:0,success:.80,mult:.75},medium:{cost:100,success:.90,mult:1},high:{cost:250,success:1,mult:1.25}}[intensity];
     if(g.budget<cfg.cost){ UI.log(`Nicht genug Budget. Benötigt: ${UI.euro(cfg.cost)}.`); return; }
 
     if(!g.roster || !g.roster.length){

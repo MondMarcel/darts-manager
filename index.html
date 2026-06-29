@@ -109,12 +109,12 @@
             <h3>Intensität</h3>
             <p class="small" id="selectedTrainingLabel"></p>
             <button id="trainLow" onclick="Training.run('low')">Niedrig · 0 € · 80%</button>
-            <button id="trainMed" onclick="Training.run('medium')">Mittel · 150 € · 90%</button>
-            <button id="trainHigh" onclick="Training.run('high')">Hoch · 400 € · 100%</button>
+            <button id="trainMed" onclick="Training.run('medium')">Mittel · 100 € · 90%</button>
+            <button id="trainHigh" onclick="Training.run('high')">Hoch · 250 € · 100%</button>
           </div>
 
           <hr>
-          <button id="playTournamentBtn" class="secondary" onclick="Tournaments.playCurrent()">Turnier dieser Woche spielen</button>
+          <button id="playTournamentBtn" class="secondary" onclick="Tournaments.previewCurrent()">Turnier dieser Woche spielen</button>
           <button id="advanceBtn" onclick="Game.nextWeek()">Nächste Woche</button>
         </div>
       </main>
