@@ -24,7 +24,16 @@ const UI = {
   currentTournament(){
     const scheduled = DATA.annualCalendar.find(t=>t.week===this.yearWeek());
     if(scheduled) return scheduled;
-    return {week:this.yearWeek(), name:"Freiwilliges Pubturnier", category:"Pubturnier", fee:5, winnerPrize:100, access:"open", isPub:true, difficulty:[45,50,55,60]};
+    return {
+      week:this.yearWeek(),
+      name:"Freiwilliges Pubturnier",
+      category:"Pubturnier",
+      fee:5,
+      winnerPrize:100,
+      access:"open",
+      isPub:true,
+      difficulty:[45,50,55,60]
+    };
   },
   hasTourcard(){ return State.game.week <= State.game.tourcardUntilWeek; },
   formLabel(f){ if(f>=80)return"Topform"; if(f>=65)return"Sehr gut"; if(f>=50)return"Gut"; if(f>=35)return"Normal"; if(f>=20)return"Schwach"; return"Krise"; },

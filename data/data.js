@@ -1,6 +1,7 @@
 const DATA = {
-  version: "0.9.2.3",
+  version: "0.9.2.3.1",
   changelog: [
+    {version:"0.9.2.3.1", updates:["Bugfix: Turnierbutton öffnet wieder die Turniervorschau","Bugfix: Pubturnier-Werte werden korrekt angezeigt","Changelog auf 0.9.2.3.1 aktualisiert"]},
     {version:"0.9.2.3", updates:["Geld-Balancing überarbeitet","Pubturniere: 5 € Startgeld und 100 € Siegerpreisgeld","Regionale Preisgelder erhöht","Mittleres Training kostet jetzt 100 €, hohes Training 250 €","Turnierbutton öffnet jetzt eine Vorschau mit erwarteten Gegner-Averages","Turnierstart erfolgt erst nach Bestätigung im Vorschau-Popup"]},
     {version:"0.9.2.2", updates:["Training wirkt jetzt auf alle Spieler im Team","Trainingstexte zeigen an, wie viele Spieler eine positive Einheit hatten","Turniere bleiben weiterhin Aktion des aktiven Spielers"]},
     {version:"0.9.2.1", updates:["Gescoutete Spieler können jetzt verpflichtet werden","Freier Spielerslot wird geprüft","Einfache Teamliste eingebaut","Aktiver Spieler kann gewechselt werden"]},
