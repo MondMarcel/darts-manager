@@ -37,6 +37,7 @@ const Game = {
     g.week++;
     g.trainedThisWeek=false;
     g.playedThisWeek=false;
+    g.pubTournament=null;
     Scouting.completeIfReady();
 
     if(g.week===g.tourcardUntilWeek+1 && g.tourcardUntilWeek>0){

@@ -1,3 +1,3 @@
-# Darts Manager Alpha 0.9.2.3.1
+# Darts Manager Alpha 0.9.2.3.2
 
-Bugfix: Turnierbutton/Vorschau repariert, Pubturnier-Werte und Changelog aktualisiert.
+Fix: Turniere haben Finale; Pubturniere variieren stärker und können gelegentlich stärkere lokale Spieler enthalten.
